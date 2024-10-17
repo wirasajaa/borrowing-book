@@ -36,6 +36,9 @@ export class BookService {
     // return millisecondsDiff;
     return Math.round(millisecondsDiff / (1000 * 3600 * 24));
   }
+  getBorrowingBook() {
+    return bookBorrowed;
+  }
 
   async getBooks(): Promise<BookModel[]> {
     return this.prismaService.book.findMany();
