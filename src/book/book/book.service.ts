@@ -3,7 +3,20 @@ import { BookModel } from './models/book.model';
 import { PrismaClient } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma/prisma.service';
 
-const bookBorrowed = ['JK-45', 'TW-11'];
+const bookBorrowed = [
+  {
+    member_code: 'M001',
+    book_code: 'SHR-1',
+    qty: '1',
+    date_borrowed: '8/12/2024', // mm/dd/yyyy
+  },
+  {
+    member_code: 'M002',
+    book_code: 'HOB-83',
+    qty: '1',
+    date_borrowed: '10/11/2024', // mm/dd/yyyy
+  },
+];
 
 @Injectable()
 export class BookService {
@@ -14,6 +27,14 @@ export class BookService {
   }
   containsAny(arr1, arr2) {
     return arr1.some((item) => arr2.includes(item));
+  }
+  extractColumn(arr, col) {
+    return arr.map((item) => item[col]);
+  }
+  countDays(from: Date, to: Date) {
+    const millisecondsDiff = to.getTime() - from.getTime();
+    // return millisecondsDiff;
+    return Math.round(millisecondsDiff / (1000 * 3600 * 24));
   }
 
   async getBooks(): Promise<BookModel[]> {
@@ -38,7 +59,9 @@ export class BookService {
     }
 
     // check book borrowed by other
-    if (this.containsAny(bookBorrowed, req.books)) {
+    if (
+      this.containsAny(this.extractColumn(bookBorrowed, 'book_code'), req.books)
+    ) {
       throw new HttpException(
         'books still borrowed by others.',
         HttpStatus.BAD_REQUEST,
@@ -66,6 +89,34 @@ export class BookService {
     return {
       statusCode: 200,
       message: 'successfully borrowed books.',
+    };
+  }
+
+  async returnBooks(req) {
+    // check member has borrowed some books
+    const findMember = await bookBorrowed.find(
+      (item) =>
+        item.member_code == req.member_code && item.book_code == req.book_code,
+    );
+    if (findMember == null) {
+      throw new HttpException(
+        'borrowing data not found.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    //check total days
+    const dateNow = new Date();
+    const borrowedDate = new Date(findMember.date_borrowed);
+    const totalDay = this.countDays(borrowedDate, dateNow);
+    totalDay > 7 && dateNow.setDate(dateNow.getDate() + 3);
+    return {
+      statusCode: 200,
+      message: 'successful book return.',
+      data: {
+        penalty: totalDay > 7,
+        penaltyTimeout: totalDay > 7 ? dateNow : null,
+      },
     };
   }
 }

@@ -16,4 +16,8 @@ export class BookController {
   async bookBorrowing(@Body() req): Promise<any> {
     return this.bookService.borrowingBooks(req);
   }
+  @Post('return')
+  async bookReturn(@Body() req): Promise<any> {
+    return this.bookService.returnBooks(req);
+  }
 }
