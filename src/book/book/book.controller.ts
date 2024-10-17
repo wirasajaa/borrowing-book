@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
   Post,
@@ -11,6 +12,11 @@ import { BookModel } from './models/book.model';
 @Controller('api/book')
 export class BookController {
   constructor(private bookService: BookService) {}
+
+  @Get()
+  async getBooks(): Promise<any> {
+    return this.bookService.getBooks();
+  }
 
   @Post()
   async bookBorrowing(@Body() req): Promise<any> {

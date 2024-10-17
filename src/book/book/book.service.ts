@@ -109,7 +109,7 @@ export class BookService {
     const dateNow = new Date();
     const borrowedDate = new Date(findMember.date_borrowed);
     const totalDay = this.countDays(borrowedDate, dateNow);
-    totalDay > 7 && dateNow.setDate(dateNow.getDate() + 3);
+    totalDay > 7 && dateNow.setDate(dateNow.getDate() + 3); // add 3days if greater then 7 days
     return {
       statusCode: 200,
       message: 'successful book return.',
