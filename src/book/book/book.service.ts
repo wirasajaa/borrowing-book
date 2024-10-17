@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { BookModel } from './models/book.model';
 import { PrismaClient } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma/prisma.service';
+import { ApiBadRequestResponse } from '@nestjs/swagger';
 
 const bookBorrowed = [
   {
@@ -23,7 +24,7 @@ export class BookService {
   constructor(private prismaService: PrismaService) {}
 
   sumArray(arr): number {
-    return arr.reduce((accumulate, current) => accumulate + current);
+    return arr.reduce((a, b) => a + b);
   }
   containsAny(arr1, arr2) {
     return arr1.some((item) => arr2.includes(item));
@@ -44,15 +45,14 @@ export class BookService {
     return this.prismaService.book.findMany();
   }
 
-  async getBooksByCode(code) {
+  async getBooksByCode(code: any) {
     return this.prismaService.book.findMany({
       where: { code: { in: code } },
     });
   }
 
-  async borrowingBooks(req) {
+  async borrowingBooks(req: any) {
     let totalBooks = this.sumArray(req.quantity);
-
     // check total book borrowed
     if (totalBooks > 2 || totalBooks < 1) {
       throw new HttpException(
