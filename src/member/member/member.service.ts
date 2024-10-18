@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { BookService } from 'src/book/book/book.service';
-import { PrismaService } from 'src/prisma/prisma/prisma.service';
+import { BookService } from '../../book/book/book.service';
+import { PrismaService } from '../../prisma/prisma/prisma.service';
 
 @Injectable()
 export class MemberService {

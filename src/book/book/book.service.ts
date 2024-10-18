@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { BookModel } from './models/book.model';
 import { PrismaClient } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma/prisma.service';
 import { ApiBadRequestResponse } from '@nestjs/swagger';
 
 const bookBorrowed = [
